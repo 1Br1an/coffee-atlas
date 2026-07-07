@@ -110,7 +110,11 @@ function Timeline({
         className="relative h-16 cursor-pointer touch-none select-none rounded-2xl bg-sand ring-1 ring-line focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         onPointerDown={(e) => {
           dragging.current = true
-          e.currentTarget.setPointerCapture(e.pointerId)
+          try {
+            e.currentTarget.setPointerCapture(e.pointerId)
+          } catch {
+            // stale pointer id (e.g. cancelled touch) — scrubbing still works
+          }
           scrubTo(e.clientX)
         }}
         onPointerMove={(e) => {
@@ -118,7 +122,11 @@ function Timeline({
         }}
         onPointerUp={(e) => {
           dragging.current = false
-          e.currentTarget.releasePointerCapture(e.pointerId)
+          try {
+            e.currentTarget.releasePointerCapture(e.pointerId)
+          } catch {
+            // capture was never acquired — nothing to release
+          }
         }}
         onKeyDown={(e) => {
           if (e.key === 'ArrowLeft') onScrub(Math.max(0, t - 5))
@@ -200,6 +208,8 @@ function Beaker({ recipe, t }: { recipe: Recipe; t: number }) {
 function Studio({ recipe }: { recipe: Recipe }) {
   const [t, setT] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const interactiveRef = useRef<HTMLDivElement>(null)
+  const hasAutoPlayed = useRef(false)
   const total = recipe.totalTimeSec
   const activeIdx = activePourIndex(recipe.pours, t)
   const activePour = recipe.pours[activeIdx]
@@ -209,6 +219,29 @@ function Studio({ recipe }: { recipe: Recipe }) {
     setT(0)
     setPlaying(false)
   }, [recipe.id])
+
+  // Kick the timeline into motion the first time the studio scrolls into view,
+  // so it's immediately obvious the brew is live. Fires once; skipped under
+  // reduced-motion (the play button and scrub still work).
+  useEffect(() => {
+    const el = interactiveRef.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !hasAutoPlayed.current) {
+            hasAutoPlayed.current = true
+            setT(0)
+            setPlaying(true)
+          }
+        }
+      },
+      { threshold: 0.3 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   // real-time playback
   useEffect(() => {
@@ -248,7 +281,7 @@ function Studio({ recipe }: { recipe: Recipe }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="ca-kicker">{recipe.brewer}</p>
-            <h3 className="mt-1 font-serif text-3xl font-medium text-ink">{recipe.name}</h3>
+            <h3 className="mt-1 font-serif text-3xl font-semibold text-ink">{recipe.name}</h3>
             <p className="mt-1 text-sm text-soft">{recipe.accolade}</p>
           </div>
         </div>
@@ -267,7 +300,7 @@ function Studio({ recipe }: { recipe: Recipe }) {
       </div>
 
       {/* interactive */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto]">
+      <div ref={interactiveRef} className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto]">
         <div className="ca-card p-6 sm:p-7">
           <div className="flex items-center gap-3">
             <button
@@ -394,7 +427,7 @@ function PourStrip({ recipe, maxTotal }: { recipe: Recipe; maxTotal: number }) {
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <div>
           <p className="ca-kicker">{recipe.brewer}</p>
-          <h4 className="font-serif text-xl text-ink">{recipe.name}</h4>
+          <h4 className="font-serif text-xl font-semibold text-ink">{recipe.name}</h4>
         </div>
         <p className="text-sm text-soft">
           {recipe.pours.length} pours · {formatTime(recipe.totalTimeSec)} · {recipe.ratio}
@@ -442,7 +475,7 @@ export function PourOver({ level }: SectionProps) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <p className="ca-kicker">Pour Over Studio</p>
-      <h2 className="mt-2 max-w-2xl font-serif text-4xl font-medium leading-[1.1] text-ink sm:text-5xl">
+      <h2 className="mt-2 max-w-2xl font-serif text-4xl font-bold leading-[1.1] text-ink sm:text-5xl">
         Recipes, pour by pour
       </h2>
       <p className="mt-4 max-w-2xl text-lg leading-relaxed text-soft">{intro[level]}</p>

@@ -91,7 +91,7 @@ function OriginDetail({ origin, domain }: { origin: Origin; domain: [number, num
           <MapPin className="h-3.5 w-3.5" strokeWidth={2} />
           {origin.region}
         </p>
-        <h3 className="mt-1 font-serif text-3xl font-medium text-ink">{origin.country}</h3>
+        <h3 className="mt-1 font-serif text-3xl font-semibold text-ink">{origin.country}</h3>
       </motion.div>
 
       <motion.p variants={item} className="text-[15px] leading-relaxed text-soft">
@@ -148,7 +148,7 @@ export function Origins({ level }: SectionProps) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <p className="ca-kicker">Origins</p>
-      <h2 className="mt-2 max-w-2xl font-serif text-4xl font-medium leading-[1.1] text-ink sm:text-5xl">
+      <h2 className="mt-2 max-w-2xl font-serif text-4xl font-bold leading-[1.1] text-ink sm:text-5xl">
         The Bean Belt
       </h2>
       <p className="mt-4 max-w-2xl text-lg leading-relaxed text-soft">{intro[level]}</p>
@@ -158,9 +158,9 @@ export function Origins({ level }: SectionProps) {
           <div className="ca-card overflow-hidden p-3 sm:p-5">
             <BeanBeltMap origins={origins} selectedId={selectedId} onSelect={setSelectedId} />
           </div>
-          <p className="mt-3 flex items-center gap-2 px-1 text-sm text-faint">
-            <span className="inline-block h-2.5 w-6 rounded-full bg-accent/25 ring-1 ring-accent/40" />
-            Highlighted band: 25°N – 25°S, where all specialty coffee grows.
+          <p className="mt-3 flex items-center justify-center gap-2 px-1 text-center text-sm text-faint">
+            <span className="inline-block h-2.5 w-6 shrink-0 rounded-full bg-accent/25 ring-1 ring-accent/40" />
+            Drag to spin. Highlighted band: 25°N – 25°S, where all specialty coffee grows.
           </p>
         </div>
 
@@ -181,7 +181,7 @@ export function Origins({ level }: SectionProps) {
                   <div className="grid h-14 w-14 place-items-center rounded-2xl bg-sand">
                     <MapPin className="h-6 w-6 text-accent" strokeWidth={1.75} />
                   </div>
-                  <p className="mt-4 font-serif text-xl text-ink">Choose an origin</p>
+                  <p className="mt-4 font-serif text-xl font-semibold text-ink">Choose an origin</p>
                   <p className="mt-1 max-w-[16rem] text-sm text-soft">
                     Select any pin on the map to reveal its story and flavour profile.
                   </p>

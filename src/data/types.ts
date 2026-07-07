@@ -63,5 +63,17 @@ export interface Recipe {
   pours: PourEvent[]
 }
 
+export interface BrewMethod {
+  id: string
+  name: string
+  body: number
+  clarity: number
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+  brewTimeMin: string
+  grindSize: string
+  roastRec: string
+  notes: string[]
+}
+
 // The persona chosen at onboarding. Drives copy depth + default section order.
 export type Level = 'drinker' | 'curious' | 'brewer'

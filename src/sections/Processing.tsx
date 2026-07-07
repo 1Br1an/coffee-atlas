@@ -144,7 +144,7 @@ export function Processing({ level }: SectionProps) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <p className="ca-kicker">Processing Lab</p>
-      <h2 className="mt-2 max-w-2xl font-serif text-4xl font-medium leading-[1.1] text-ink sm:text-5xl">
+      <h2 className="mt-2 max-w-2xl font-serif text-4xl font-bold leading-[1.1] text-ink sm:text-5xl">
         How drying changes everything
       </h2>
       <p className="mt-4 max-w-2xl text-lg leading-relaxed text-soft">{intro[level]}</p>
@@ -199,7 +199,7 @@ export function Processing({ level }: SectionProps) {
               <div className="ca-card flex flex-col items-center justify-center gap-4 p-8">
                 <Bean methodId={active.id} fruitiness={active.profile.fruitiness} />
                 <div className="text-center">
-                  <h3 className="font-serif text-2xl text-ink">{active.name}</h3>
+                  <h3 className="font-serif text-2xl font-semibold text-ink">{active.name}</h3>
                   <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-soft">
                     {active.oneLiner}
                   </p>
@@ -255,7 +255,7 @@ export function Processing({ level }: SectionProps) {
                   <div className="mt-5 flex items-center gap-4">
                     <Bean methodId={method.id} fruitiness={method.profile.fruitiness} />
                     <div>
-                      <h3 className="font-serif text-2xl text-ink">{method.name}</h3>
+                      <h3 className="font-serif text-2xl font-semibold text-ink">{method.name}</h3>
                       <p className="mt-1 text-sm leading-relaxed text-soft">{method.oneLiner}</p>
                     </div>
                   </div>

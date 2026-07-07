@@ -37,7 +37,7 @@ export function Onboarding({ onChoose }: OnboardingProps) {
           Coffee Atlas
         </motion.p>
         <motion.h1
-          className="mt-3 text-center font-serif text-4xl font-medium leading-tight text-ink sm:text-5xl"
+          className="mt-3 text-center font-serif text-4xl font-bold leading-tight text-ink sm:text-5xl"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -71,7 +71,7 @@ export function Onboarding({ onChoose }: OnboardingProps) {
                 {c.emoji}
               </span>
               <span className="min-w-0">
-                <span className="block font-serif text-lg text-ink">{c.title}</span>
+                <span className="block font-serif text-lg font-semibold text-ink">{c.title}</span>
                 <span className="block text-sm text-soft">{c.caption}</span>
               </span>
               <span className="ml-auto text-faint transition-transform duration-200 group-hover:translate-x-1 group-hover:text-accent">

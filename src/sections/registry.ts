@@ -1,10 +1,12 @@
 import type { ComponentType } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import { Globe2, FlaskConical, Timer } from 'lucide-react'
+import { Globe2, FlaskConical, Timer, Compass, Coffee } from 'lucide-react'
 import type { Level } from '../data/types'
 import { Origins } from './Origins'
 import { Processing } from './Processing'
 import { PourOver } from './PourOver'
+import { CoffeeCompass } from './Compass'
+import { BrewMethods } from './BrewMethods'
 
 // Every section receives the persona level and nothing else; each pulls the
 // data slice it needs from '../data' and renders it through shared components.
@@ -25,13 +27,15 @@ export const sections: SectionDef[] = [
   { id: 'origins', label: 'Origins', tagline: 'Where it grows', icon: Globe2, Component: Origins },
   { id: 'processing', label: 'Processing', tagline: 'How it dries', icon: FlaskConical, Component: Processing },
   { id: 'pour-over', label: 'Pour Over', tagline: 'How it brews', icon: Timer, Component: PourOver },
+  { id: 'compass', label: 'Compass', tagline: 'Find your cup', icon: Compass, Component: CoffeeCompass },
+  { id: 'brew-methods', label: 'Brew Methods', tagline: 'Pick your brewer', icon: Coffee, Component: BrewMethods },
 ]
 
 // Default reading order per persona — copy depth is handled inside each section.
 export const sectionOrder: Record<Level, string[]> = {
-  drinker: ['origins', 'pour-over', 'processing'],
-  curious: ['origins', 'processing', 'pour-over'],
-  brewer: ['pour-over', 'processing', 'origins'],
+  drinker: ['origins', 'compass', 'brew-methods', 'pour-over', 'processing'],
+  curious: ['origins', 'processing', 'brew-methods', 'pour-over', 'compass'],
+  brewer: ['pour-over', 'brew-methods', 'processing', 'origins', 'compass'],
 }
 
 export function orderedSections(level: Level): SectionDef[] {

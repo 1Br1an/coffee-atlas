@@ -23,3 +23,10 @@ export function profileBars(p: FlavorProfile): AttributeDatum[] {
 export function processingBars(p: FlavorProfile & { clarity: number }): AttributeDatum[] {
   return [{ label: 'Clarity', value: p.clarity, color: COLORS.clarity }, ...profileBars(p)]
 }
+
+export function brewMethodBars(m: { body: number; clarity: number }): AttributeDatum[] {
+  return [
+    { label: 'Body', value: m.body, color: COLORS.body },
+    { label: 'Clarity', value: m.clarity, color: COLORS.clarity },
+  ]
+}
