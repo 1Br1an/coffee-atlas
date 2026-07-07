@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { MapPin, Sparkles, X } from 'lucide-react'
 import { origins } from '../data'
@@ -138,6 +138,14 @@ export function Origins({ level }: SectionProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = origins.find((o) => o.id === selectedId) ?? null
 
+  // Gentle transform parallax: the globe drifts slower than the page on scroll.
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const mapY = useTransform(scrollYProgress, [0, 1], [28, -28])
+
   // Elevation scale derived from the data — no magic numbers.
   const domain = useMemo<[number, number]>(() => {
     const lows = origins.map((o) => o.elevationM[0])
@@ -146,7 +154,7 @@ export function Origins({ level }: SectionProps) {
   }, [])
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+    <div ref={sectionRef} className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <p className="ca-kicker">Origins</p>
       <h2 className="mt-2 max-w-2xl font-serif text-4xl font-bold leading-[1.1] text-ink sm:text-5xl">
         The Bean Belt
@@ -155,9 +163,9 @@ export function Origins({ level }: SectionProps) {
 
       <div className="mt-10 grid gap-8 lg:grid-cols-5">
         <div className="lg:col-span-3">
-          <div className="ca-card overflow-hidden p-3 sm:p-5">
+          <motion.div style={{ y: mapY }} className="ca-card overflow-hidden p-3 sm:p-5">
             <BeanBeltMap origins={origins} selectedId={selectedId} onSelect={setSelectedId} />
-          </div>
+          </motion.div>
           <p className="mt-3 flex items-center justify-center gap-2 px-1 text-center text-sm text-faint">
             <span className="inline-block h-2.5 w-6 shrink-0 rounded-full bg-accent/25 ring-1 ring-accent/40" />
             Drag to spin. Highlighted band: 25°N – 25°S, where all specialty coffee grows.

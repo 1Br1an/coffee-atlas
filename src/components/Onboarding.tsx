@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import type { Level } from '../data/types'
 
 interface Choice {
@@ -20,14 +20,38 @@ interface OnboardingProps {
 }
 
 export function Onboarding({ onChoose }: OnboardingProps) {
+  // Cursor-reactive drift for the accent shapes (inert on touch — no mousemove).
+  const px = useMotionValue(0)
+  const py = useMotionValue(0)
+  const sx = useSpring(px, { stiffness: 55, damping: 18 })
+  const sy = useSpring(py, { stiffness: 55, damping: 18 })
+  const blobAX = useTransform(sx, (v) => v * -0.03)
+  const blobAY = useTransform(sy, (v) => v * -0.03)
+  const blobBX = useTransform(sx, (v) => v * 0.05)
+  const blobBY = useTransform(sy, (v) => v * 0.05)
+
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-cream px-5 py-10"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.35 } }}
+      onMouseMove={(e) => {
+        px.set(e.clientX - window.innerWidth / 2)
+        py.set(e.clientY - window.innerHeight / 2)
+      }}
     >
-      <div className="w-full max-w-2xl">
+      <motion.div
+        aria-hidden="true"
+        style={{ x: blobAX, y: blobAY }}
+        className="pointer-events-none absolute left-[12%] top-[18%] h-56 w-56 rounded-full bg-accent/15 blur-3xl"
+      />
+      <motion.div
+        aria-hidden="true"
+        style={{ x: blobBX, y: blobBY }}
+        className="pointer-events-none absolute bottom-[12%] right-[10%] h-64 w-64 rounded-full bg-amber/15 blur-3xl"
+      />
+      <div className="relative z-10 w-full max-w-2xl">
         <motion.p
           className="ca-kicker text-center"
           initial={{ opacity: 0, y: 8 }}

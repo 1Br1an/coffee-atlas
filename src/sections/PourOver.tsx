@@ -78,10 +78,12 @@ function Timeline({
   recipe,
   t,
   onScrub,
+  showCue,
 }: {
   recipe: Recipe
   t: number
   onScrub: (t: number) => void
+  showCue: boolean
 }) {
   const trackRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
@@ -153,9 +155,28 @@ function Timeline({
           style={{ left: `${(t / total) * 100}%` }}
         >
           <div className="absolute inset-y-1 w-0.5 -translate-x-1/2 rounded-full bg-ink" />
+          {showCue && (
+            <motion.div
+              className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink/30"
+              animate={{ scale: [1, 2.2, 1], opacity: [0.5, 0, 0.5] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          )}
           <div className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink shadow-md ring-4 ring-cream" />
         </div>
       </div>
+      <AnimatePresence>
+        {showCue && (
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-2 text-center text-xs font-medium uppercase tracking-[0.14em] text-accent"
+          >
+            Drag to explore
+          </motion.p>
+        )}
+      </AnimatePresence>
       <div className="mt-2 flex justify-between text-xs tabular-nums text-faint">
         <span>0:00</span>
         <span>{formatTime(total)}</span>
@@ -208,6 +229,7 @@ function Beaker({ recipe, t }: { recipe: Recipe; t: number }) {
 function Studio({ recipe }: { recipe: Recipe }) {
   const [t, setT] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
   const interactiveRef = useRef<HTMLDivElement>(null)
   const hasAutoPlayed = useRef(false)
   const total = recipe.totalTimeSec
@@ -271,6 +293,7 @@ function Studio({ recipe }: { recipe: Recipe }) {
   }
   const handleScrub = (nt: number) => {
     setPlaying(false)
+    setHasInteracted(true)
     setT(nt)
   }
 
@@ -333,7 +356,7 @@ function Studio({ recipe }: { recipe: Recipe }) {
           </div>
 
           <div className="mt-6">
-            <Timeline recipe={recipe} t={t} onScrub={handleScrub} />
+            <Timeline recipe={recipe} t={t} onScrub={handleScrub} showCue={!hasInteracted} />
           </div>
 
           {/* live pour readout — the teaching payload */}

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig } from 'framer-motion'
 import { Coffee } from 'lucide-react'
 import type { Level } from './data/types'
+import { Loader } from './components/Loader'
 import { Onboarding } from './components/Onboarding'
 import { Nav } from './components/Nav'
 import { orderedSections } from './sections/registry'
@@ -14,6 +15,7 @@ function App() {
     return saved === 'drinker' || saved === 'curious' || saved === 'brewer' ? saved : null
   })
   const [activeId, setActiveId] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const sections = useMemo(() => (level ? orderedSections(level) : []), [level])
   const sectionEls = useRef<Record<string, HTMLElement | null>>({})
@@ -64,7 +66,7 @@ function App() {
       {/* App content renders as soon as a level is set and is visible by
           default — its reveal is CSS, never gated on a JS animation. */}
       {level && (
-        <div>
+        <div className="pb-16 md:pb-0">
           <Nav
             sections={sections}
             activeId={activeId}
@@ -101,7 +103,12 @@ function App() {
 
       {/* Onboarding overlays on top and fades out; content already sits behind it. */}
       <AnimatePresence>
-        {!level && <Onboarding key="onboarding" onChoose={handleChoose} />}
+        {!loading && !level && <Onboarding key="onboarding" onChoose={handleChoose} />}
+      </AnimatePresence>
+
+      {/* Artistic preloader — the first note of the motion language. */}
+      <AnimatePresence>
+        {loading && <Loader key="loader" onDone={() => setLoading(false)} />}
       </AnimatePresence>
     </MotionConfig>
   )

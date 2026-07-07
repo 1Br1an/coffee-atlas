@@ -1,3 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
+import { animate, useInView } from 'framer-motion'
+
 export interface AttributeDatum {
   label: string
   value: number
@@ -11,6 +14,30 @@ interface AttributeBarsProps {
   max?: number
   /** Show the numeric value at the end of each bar. */
   showValues?: boolean
+}
+
+/** Counts up from the previous value to the target when scrolled into view. */
+function AnimatedNumber({ value }: { value: number }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { amount: 0.4 })
+  const [display, setDisplay] = useState(value)
+  const prev = useRef(0)
+  const started = useRef(false)
+
+  useEffect(() => {
+    if (!inView) return
+    const from = started.current ? prev.current : 0
+    started.current = true
+    prev.current = value
+    const controls = animate(from, value, {
+      duration: 0.7,
+      ease: 'easeOut',
+      onUpdate: (v) => setDisplay(v),
+    })
+    return () => controls.stop()
+  }, [inView, value])
+
+  return <span ref={ref}>{Math.round(display)}</span>
 }
 
 /**
@@ -36,7 +63,7 @@ export function AttributeBars({ items, max = 100, showValues = true }: Attribute
               </div>
               {showValues && (
                 <span className="w-7 shrink-0 text-right text-xs tabular-nums text-faint">
-                  {Math.round(item.value)}
+                  <AnimatedNumber value={item.value} />
                 </span>
               )}
             </div>

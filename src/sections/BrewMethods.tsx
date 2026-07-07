@@ -43,9 +43,16 @@ function SpecRow({
   )
 }
 
-function MethodCard({ method }: { method: BrewMethod }) {
+function MethodCard({ method, index }: { method: BrewMethod; index: number }) {
   return (
-    <div className="ca-card flex flex-col gap-5 p-6">
+    <motion.div
+      className="ca-card flex flex-col gap-5 p-6"
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.4, delay: (index % 3) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -4 }}
+    >
       <div className="flex items-start justify-between gap-3">
         <h3 className="font-serif text-2xl font-semibold text-ink">{method.name}</h3>
         <span
@@ -75,7 +82,7 @@ function MethodCard({ method }: { method: BrewMethod }) {
           </span>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -116,8 +123,8 @@ export function BrewMethods({ level }: SectionProps) {
       </div>
 
       <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {shown.map((m) => (
-          <MethodCard key={m.id} method={m} />
+        {shown.map((m, i) => (
+          <MethodCard key={m.id} method={m} index={i} />
         ))}
       </div>
     </div>
